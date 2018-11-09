@@ -29,7 +29,9 @@ namespace Engine.Model.Pieces {
 		static Queen() {
 			StaticPieces.AddRegistration("Q", CreateQueen);
 		}
-		public Queen() : base("Queen", "Q", true) {}
+		public Queen() : base("Queen", "Q", true) {
+			Value = 900;
+		}
 		public Queen(Piece other) : base(other) {}
 		public override Tuple<int, int>[] getDirections() {
 			return directions;

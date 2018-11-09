@@ -23,7 +23,9 @@ namespace Engine.Model.Pieces {
 		static Pawn() {
 			StaticPieces.AddRegistration("P", CreatePawn);
 		}
-		public Pawn() : base("Pawn","P",true) {}
+		public Pawn() : base("Pawn","P",true) {
+			Value = 100;
+		}
 		public Pawn(Pawn other) : base(other) {}
 		public override List<Tuple<int,int>> ValidMoves(Board board, in int col, in int row) {
 			if (board[col,row]is Pawn && board[col,row].White==White) {

@@ -17,7 +17,9 @@ namespace Engine.Model.Pieces {
 		static Knight() {
 			StaticPieces.AddRegistration("N", CreateKnight);
 		}
-		public Knight() : base("Knight", "N", true) {}
+		public Knight() : base("Knight", "N", true) {
+			Value = 300;
+		}
 		public Knight(Knight other) : base(other) {}
 		public override List<Tuple<int, int>> ValidMoves(Board board, in int col, in int row) {
 			if (board[col, row] is Knight && board[col, row].White == White) {

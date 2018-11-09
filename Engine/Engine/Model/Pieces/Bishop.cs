@@ -20,7 +20,9 @@ namespace Engine.Model.Pieces {
 		static Bishop() {
 			StaticPieces.AddRegistration("B", CreateBishop);
 		}
-		public Bishop() : base("Bishop", "B", true) {}
+		public Bishop() : base("Bishop", "B", true) {
+			Value = 300;
+		}
 		public Bishop(Bishop other) : base(other) {}
 		public override List<Tuple<int, int>> ValidMoves(Board board, in int col, in int row) {
 			return ValidMoves<Bishop>(board, col, row);

@@ -20,7 +20,9 @@ namespace Engine.Model.Pieces {
 		static Rook() {
 			StaticPieces.AddRegistration("R", CreateRook);
 		}
-		public Rook() : base("Rook","R",true) {}
+		public Rook() : base("Rook","R",true) {
+			Value = 500;
+		}
 		public Rook(Rook other) : base(other) {}
 		public override List<Tuple<int, int>> ValidMoves(Board board, in int col, in int row) {
 			return ValidMoves<Rook>(board, col, row);
