@@ -63,5 +63,28 @@ namespace Engine.Model.Pieces {
 				throw new Exception("Pawn-Piece of color "+(White?"white":"black")+" expected.");
 			}
 		}
+		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
+			if (board[col, row] is Pawn && board[col, row].White == White) {
+				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
+				if (White) {
+					if (board.IsAccessible(col + 1, row + 1) && !board.IsFree(col + 1, row + 1) && board[col + 1, row + 1].White) {//Verteidigt rechts
+						ret.Add(new Tuple<int, int>(col + 1, row + 1));
+					}
+					if (board.IsAccessible(col - 1, row + 1) && !board.IsFree(col - 1, row + 1) && board[col - 1, row + 1].White) {//Verteidigt links
+						ret.Add(new Tuple<int, int>(col - 1, row + 1));
+					}
+				} else {
+					if (board.IsAccessible(col + 1, row - 1) && !board.IsFree(col + 1, row - 1) && !board[col + 1, row - 1].White) {//Verteidigt links
+						ret.Add(new Tuple<int, int>(col + 1, row - 1));
+					}
+					if (board.IsAccessible(col - 1, row - 1) && !board.IsFree(col - 1, row - 1) && !board[col - 1, row - 1].White) {//Verteidigt rechts
+						ret.Add(new Tuple<int, int>(col - 1, row - 1));
+					}
+				}
+				return ret;
+			} else {
+				throw new Exception("Pawn-Piece of color " + (White ? "white" : "black") + " expected.");
+			}
+		}
 	}
 }

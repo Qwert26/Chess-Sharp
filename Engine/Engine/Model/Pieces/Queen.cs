@@ -32,12 +32,18 @@ namespace Engine.Model.Pieces {
 		public Queen() : base("Queen", "Q", true) {
 			Value = 900;
 		}
-		public Queen(Piece other) : base(other) {}
+		public Queen(Piece other) : base(other) { }
 		public override Tuple<int, int>[] getDirections() {
 			return directions;
 		}
 		public override List<Tuple<int, int>> ValidMoves(Board board, in int col, in int row) {
 			return ValidMoves<Queen>(board, col, row);
+		}
+		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
+			return ProtectedTeammates<Queen>(board, col, row);
+		}
+		public override List<PinData> CurrentPins(Board board, in int col, in int row) {
+			return CurrentPins<Queen>(board, col, row);
 		}
 	}
 }

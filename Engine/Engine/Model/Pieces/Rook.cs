@@ -30,5 +30,11 @@ namespace Engine.Model.Pieces {
 		public override Tuple<int, int>[] getDirections() {
 			return directions;
 		}
+		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
+			return ProtectedTeammates<Rook>(board, col, row);
+		}
+		public override List<PinData> CurrentPins(Board board, in int col, in int row) {
+			return CurrentPins<Rook>(board, col, row);
+		}
 	}
 }

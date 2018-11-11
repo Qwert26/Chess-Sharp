@@ -41,5 +41,25 @@ namespace Engine.Model.Pieces {
 				throw new Exception("Knight-Piece of color " + (White ? "white" : "black") + " expected.");
 			}
 		}
+		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
+			if (board[col, row] is Knight && board[col, row].White == White) {
+				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
+				int targetCol, targetRow;
+				foreach (Tuple<int, int> ct in condensedTargets) {
+					for (int multCol = -1; multCol <= 1; multCol += 2) {
+						for (int multRow = -1; multRow <= 1; multRow += 2) {
+							targetCol = col + ct.Item1 * multCol;
+							targetRow = row + ct.Item2 * multRow;
+							if (board.IsAccessible(targetCol, targetRow) && !board.IsFree(targetCol, targetRow) && board[targetCol, targetRow].White == White) {
+								ret.Add(new Tuple<int, int>(targetCol, targetRow));
+							}
+						}
+					}
+				}
+				return ret;
+			} else {
+				throw new Exception("Knight-Piece of color " + (White ? "white" : "black") + " expected.");
+			}
+		}
 	}
 }

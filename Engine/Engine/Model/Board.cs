@@ -16,6 +16,11 @@ namespace Engine.Model {
 			castleRights = "";
 		}
 		public bool Zylindrical { get; set; }
+		public int MaximumMovedistance {
+			get {
+				return Math.Max(pieces.GetLength(0), pieces.GetLength(1))-1;
+			}
+		}
 		public Piece this[int col, int row] {
 			get {
 				if (Zylindrical) {
@@ -72,9 +77,9 @@ namespace Engine.Model {
 			}
 		}
 		/// <summary>
-		/// 
+		/// Sammelt alle gültigen Züge des einen oder anderen Teams. Nützlich für die Erstellung des Zugbaumes.
 		/// </summary>
-		/// <param name="white"></param>
+		/// <param name="white">Soll das weiße Team betrachtet werden?</param>
 		/// <returns></returns>
 		public Dictionary<Tuple<int, int>, List<Tuple<int, int>>> CollectValidMoves(bool white) {
 			Dictionary<Tuple<int, int>, List<Tuple<int, int>>> ret = new Dictionary<Tuple<int, int>, List<Tuple<int, int>>>();
@@ -97,6 +102,37 @@ namespace Engine.Model {
 				for (int row = 0; row < pieces.GetLength(1); row++) {
 					if (!IsFree(col, row)) {
 						ret.Add(new Tuple<int, int>(col, row), this[col, row].ValidMoves(this, col, row));
+					}
+				}
+			}
+			return ret;
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="white"></param>
+		/// <returns></returns>
+		public Dictionary<Tuple<int, int>, List<Tuple<int, int>>> CollectProtectedTeammates(bool white) {
+			Dictionary<Tuple<int, int>, List<Tuple<int, int>>> ret = new Dictionary<Tuple<int, int>, List<Tuple<int, int>>>();
+			for (int col = 0; col < pieces.GetLength(0); col++) {
+				for (int row = 0; row < pieces.GetLength(1); row++) {
+					if (!IsFree(col, row) && this[col, row].White == white) {
+						ret.Add(new Tuple<int, int>(col, row), this[col, row].ProtectedTeammates(this, col, row));
+					}
+				}
+			}
+			return ret;
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public Dictionary<Tuple<int, int>, List<Tuple<int, int>>> CollectProtectedTeammates() {
+			Dictionary<Tuple<int, int>, List<Tuple<int, int>>> ret = new Dictionary<Tuple<int, int>, List<Tuple<int, int>>>();
+			for (int col = 0; col < pieces.GetLength(0); col++) {
+				for (int row = 0; row < pieces.GetLength(1); row++) {
+					if (!IsFree(col, row)) {
+						ret.Add(new Tuple<int, int>(col, row), this[col, row].ProtectedTeammates(this, col, row));
 					}
 				}
 			}

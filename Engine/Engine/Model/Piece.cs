@@ -39,10 +39,18 @@ namespace Engine.Model {
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="board"></param>
-		/// <param name="col"></param>
-		/// <param name="row"></param>
+		/// <param name="board">Das Brett auf dem gespielt wird.</param>
+		/// <param name="col">Aktuelle Spalte des Spiel-Stücks.</param>
+		/// <param name="row">Aktuelle Zeile des Spiel-Stücks.</param>
 		/// <returns></returns>
 		public abstract List<Tuple<int,int>> ValidMoves(Board board, in int col, in int row);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="board">Das Brett auf dem gespielt wird.</param>
+		/// <param name="col">Aktuelle Spalte des Spiel-Stücks.</param>
+		/// <param name="row">Aktuelle Zeile des Spiel-Stücks.</param>
+		/// <returns></returns>
+		public abstract List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row);
 	}
 }
