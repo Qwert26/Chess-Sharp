@@ -77,68 +77,6 @@ namespace Engine.Model {
 			}
 		}
 		/// <summary>
-		/// Sammelt alle gültigen Züge des einen oder anderen Teams. Nützlich für die Erstellung des Zugbaumes.
-		/// </summary>
-		/// <param name="white">Soll das weiße Team betrachtet werden?</param>
-		/// <returns></returns>
-		public Dictionary<Tuple<int, int>, List<Tuple<int, int>>> CollectValidMoves(bool white) {
-			Dictionary<Tuple<int, int>, List<Tuple<int, int>>> ret = new Dictionary<Tuple<int, int>, List<Tuple<int, int>>>();
-			for (int col = 0; col < pieces.GetLength(0); col++) {
-				for (int row = 0; row < pieces.GetLength(1); row++) {
-					if (!IsFree(col, row) && this[col, row].White == white) {
-						ret.Add(new Tuple<int, int>(col, row), this[col, row].ValidMoves(this, col, row));
-					}
-				}
-			}
-			return ret;
-		}
-		/// <summary>
-		/// Sammelt alle gültigen Züge von allen Figuren. Nützlich für aktuelle Gabelungen.
-		/// </summary>
-		/// <returns></returns>
-		public Dictionary<Tuple<int, int>, List<Tuple<int, int>>> CollectValidMoves() {
-			Dictionary<Tuple<int, int>, List<Tuple<int, int>>> ret = new Dictionary<Tuple<int, int>, List<Tuple<int, int>>>();
-			for (int col = 0; col < pieces.GetLength(0); col++) {
-				for (int row = 0; row < pieces.GetLength(1); row++) {
-					if (!IsFree(col, row)) {
-						ret.Add(new Tuple<int, int>(col, row), this[col, row].ValidMoves(this, col, row));
-					}
-				}
-			}
-			return ret;
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="white"></param>
-		/// <returns></returns>
-		public Dictionary<Tuple<int, int>, List<Tuple<int, int>>> CollectProtectedTeammates(bool white) {
-			Dictionary<Tuple<int, int>, List<Tuple<int, int>>> ret = new Dictionary<Tuple<int, int>, List<Tuple<int, int>>>();
-			for (int col = 0; col < pieces.GetLength(0); col++) {
-				for (int row = 0; row < pieces.GetLength(1); row++) {
-					if (!IsFree(col, row) && this[col, row].White == white) {
-						ret.Add(new Tuple<int, int>(col, row), this[col, row].ProtectedTeammates(this, col, row));
-					}
-				}
-			}
-			return ret;
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public Dictionary<Tuple<int, int>, List<Tuple<int, int>>> CollectProtectedTeammates() {
-			Dictionary<Tuple<int, int>, List<Tuple<int, int>>> ret = new Dictionary<Tuple<int, int>, List<Tuple<int, int>>>();
-			for (int col = 0; col < pieces.GetLength(0); col++) {
-				for (int row = 0; row < pieces.GetLength(1); row++) {
-					if (!IsFree(col, row)) {
-						ret.Add(new Tuple<int, int>(col, row), this[col, row].ProtectedTeammates(this, col, row));
-					}
-				}
-			}
-			return ret;
-		}
-		/// <summary>
 		/// Führt den gegebenen Zug durch und gibt die Figur zurück, die auf dem Zielfeld stand.
 		/// </summary>
 		/// <param name="toMove"></param>
@@ -161,6 +99,28 @@ namespace Engine.Model {
 					throw new Exception("Taking own piece is not allowed!");
 				}
 			}
+		}
+		public Dictionary<Tuple<int, int>, PieceStatus> CollectPieceStatus(bool white) {
+			Dictionary<Tuple<int, int>, PieceStatus> ret = new Dictionary<Tuple<int, int>, PieceStatus>();
+			for (int col = 0; col < pieces.GetLength(0); col++) {
+				for (int row = 0; row < pieces.GetLength(1); row++) {
+					if (!IsFree(col, row) && pieces[col, row].White == white) {
+						ret.Add(new Tuple<int, int>(col, row), pieces[col, row].CurrentStatus(this, col, row));
+					}
+				}
+			}
+			return ret;
+		}
+		public Dictionary<Tuple<int, int>, PieceStatus> CollectPieceStatus() {
+			Dictionary<Tuple<int, int>, PieceStatus> ret = new Dictionary<Tuple<int, int>, PieceStatus>();
+			for (int col = 0; col < pieces.GetLength(0); col++) {
+				for (int row = 0; row < pieces.GetLength(1); row++) {
+					if (!IsFree(col, row)) {
+						ret.Add(new Tuple<int, int>(col, row), pieces[col, row].CurrentStatus(this, col, row));
+					}
+				}
+			}
+			return ret;
 		}
 	}
 }

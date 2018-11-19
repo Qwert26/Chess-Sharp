@@ -27,63 +27,60 @@ namespace Engine.Model.Pieces {
 			Value = 100;
 		}
 		public Pawn(Pawn other) : base(other) {}
-		public override List<Tuple<int,int>> ValidMoves(Board board, in int col, in int row) {
-			if (board[col,row]is Pawn && board[col,row].White==White) {
-				int startRow = board.PawnStartRank(White);
-				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
+		public override PieceStatus CurrentStatus(Board board, in int col, in int row) {
+			if (board[col, row] is Pawn &&board[col,row].White==White) {
+				PieceStatus ret = new PieceStatus {
+					attackedEnemyPieces = new List<Tuple<int, int>>(),
+					freeMoveSpaces = new List<Tuple<int, int>>(),
+					protectedTeammates = new List<Tuple<int, int>>()
+				};
+				int startRank = board.PawnStartRank(White);
 				if (White) {
-					if (startRow == row && board.IsFree(col,row+2)) {//Start mit Doppelzug
-						ret.Add(new Tuple<int, int>(col, row + 2));
+					if (board.IsFree(col, row + 1)) {
+						ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row + 1));
+						if (row == startRank && board.IsFree(col, row + 2)) {
+							ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row + 2));
+						}
 					}
-					if (board.IsFree(col, row + 1)) {//Standard
-						ret.Add(new Tuple<int, int>(col, row + 1));
+					if(board.IsAccessible(col+1,row+1)&& !board.IsFree(col+1,row+1)) {
+						if (board[col + 1, row + 1].White) {
+							ret.protectedTeammates.Add(new Tuple<int, int>(col + 1, row + 1));
+						} else {
+							ret.attackedEnemyPieces.Add(new Tuple<int, int>(col + 1, row + 1));
+						}
 					}
-					if (board.IsAccessible(col + 1, row + 1) && !board.IsFree(col + 1, row + 1) && !board[col + 1, row + 1].White) {//Angriff rechts
-						ret.Add(new Tuple<int, int>(col + 1, row + 1));
-					}
-					if (board.IsAccessible(col - 1, row + 1) && !board.IsFree(col - 1, row + 1) && !board[col - 1, row + 1].White) {//Angriff links
-						ret.Add(new Tuple<int, int>(col - 1, row + 1));
+					if (board.IsAccessible(col - 1, row + 1) && !board.IsFree(col - 1, row + 1)) {
+						if (board[col - 1, row + 1].White) {
+							ret.protectedTeammates.Add(new Tuple<int, int>(col - 1, row + 1));
+						} else {
+							ret.attackedEnemyPieces.Add(new Tuple<int, int>(col - 1, row + 1));
+						}
 					}
 				} else {
-					if (startRow == row && board.IsFree(col, row - 2)) {//Start mit Doppelzug
-						ret.Add(new Tuple<int, int>(col, row - 2));
+					if (board.IsFree(col, row - 1)) {
+						ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row - 1));
+						if (row == startRank && board.IsFree(col, row - 2)) {
+							ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row - 2));
+						}
 					}
-					if (board.IsFree(col, row - 1)) {//Standard
-						ret.Add(new Tuple<int, int>(col, row - 1));
+					if (board.IsAccessible(col + 1, row - 1) && !board.IsFree(col + 1, row - 1)) {
+						if (board[col + 1, row - 1].White) {
+							ret.attackedEnemyPieces.Add(new Tuple<int, int>(col + 1, row - 1));
+						} else {
+							ret.protectedTeammates.Add(new Tuple<int, int>(col + 1, row - 1));
+						}
 					}
-					if (board.IsAccessible(col + 1, row - 1) && !board.IsFree(col + 1, row - 1) && board[col + 1, row - 1].White) {//Angriff links
-						ret.Add(new Tuple<int, int>(col + 1, row - 1));
-					}
-					if (board.IsAccessible(col - 1, row - 1) && !board.IsFree(col - 1, row - 1) && board[col - 1, row - 1].White) {//Angriff rechts
-						ret.Add(new Tuple<int, int>(col - 1, row - 1));
+					if (board.IsAccessible(col - 1, row + 1) && !board.IsFree(col - 1, row - 1)) {
+						if (board[col - 1, row - 1].White) {
+							ret.attackedEnemyPieces.Add(new Tuple<int, int>(col - 1, row - 1));
+						} else {
+							ret.protectedTeammates.Add(new Tuple<int, int>(col - 1, row - 1));
+						}
 					}
 				}
 				return ret;
 			} else {
-				throw new Exception("Pawn-Piece of color "+(White?"white":"black")+" expected.");
-			}
-		}
-		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
-			if (board[col, row] is Pawn && board[col, row].White == White) {
-				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
-				if (White) {
-					if (board.IsAccessible(col + 1, row + 1) && !board.IsFree(col + 1, row + 1) && board[col + 1, row + 1].White) {//Verteidigt rechts
-						ret.Add(new Tuple<int, int>(col + 1, row + 1));
-					}
-					if (board.IsAccessible(col - 1, row + 1) && !board.IsFree(col - 1, row + 1) && board[col - 1, row + 1].White) {//Verteidigt links
-						ret.Add(new Tuple<int, int>(col - 1, row + 1));
-					}
-				} else {
-					if (board.IsAccessible(col + 1, row - 1) && !board.IsFree(col + 1, row - 1) && !board[col + 1, row - 1].White) {//Verteidigt links
-						ret.Add(new Tuple<int, int>(col + 1, row - 1));
-					}
-					if (board.IsAccessible(col - 1, row - 1) && !board.IsFree(col - 1, row - 1) && !board[col - 1, row - 1].White) {//Verteidigt rechts
-						ret.Add(new Tuple<int, int>(col - 1, row - 1));
-					}
-				}
-				return ret;
-			} else {
-				throw new Exception("Pawn-Piece of color " + (White ? "white" : "black") + " expected.");
+				throw new Exception((White?"White":"Black")+" Pawn-Piece expected!");
 			}
 		}
 	}

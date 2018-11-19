@@ -20,36 +20,35 @@ namespace Engine.Model.Pieces {
 			Royal = true;
 		}
 		public King(King other) : base(other) {}
-		public override List<Tuple<int, int>> ValidMoves(Board board, in int col, in int row) {
+		public override PieceStatus CurrentStatus(Board board, in int col, in int row) {
 			if (board[col, row] is King && board[col, row].White == White) {
-				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
-				for (int dc = -1; dc <= 1; dc++) {
-					for (int dr = -1; dr <= 1; dr++) {
-						//0,0 wäre keine Bewegung
-						if ((!(dc == 0 && dr == 0)) && board.IsAccessible(col + dc, row + dr) && (board.IsFree(col + dc, row + dc) || board[col + dc, row + dr].White != White)) {
-							ret.Add(new Tuple<int, int>(col + dc, row + dr));
+				PieceStatus ret = new PieceStatus {
+					attackedEnemyPieces = new List<Tuple<int, int>>(),
+					freeMoveSpaces = new List<Tuple<int, int>>(),
+					protectedTeammates = new List<Tuple<int, int>>()
+				};
+				for (sbyte dc = -1; dc <= 1; dc++) {
+					for (sbyte dr = -1; dr <= 1; dr++) {
+						if (dc != 0 || dr != 0) {
+							int targetCol = col + dc;
+							int targetRow = row + dr;
+							if (board.IsAccessible(targetCol, targetRow)) {
+								if (board.IsFree(targetCol, targetRow)) {
+									ret.freeMoveSpaces.Add(new Tuple<int, int>(targetCol, targetRow));
+								} else {
+									if (board[targetCol, targetRow].White == White) {
+										ret.protectedTeammates.Add(new Tuple<int, int>(targetCol, targetRow));
+									} else {
+										ret.attackedEnemyPieces.Add(new Tuple<int, int>(targetCol, targetRow));
+									}
+								}
+							}
 						}
 					}
 				}
 				return ret;
 			} else {
-				throw new Exception("King-Piece of color " + (White ? "white" : "black") + " expected.");
-			}
-		}
-		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
-			if (board[col, row] is King && board[col, row].White == White) {
-				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
-				for (int dc = -1; dc <= 1; dc++) {
-					for (int dr = -1; dr <= 1; dr++) {
-						//0,0 wäre keine Bewegung
-						if ((!(dc == 0 && dr == 0)) && board.IsAccessible(col + dc, row + dr) && !board.IsFree(col + dc, row + dc) && board[col + dc, row + dr].White == White) {
-							ret.Add(new Tuple<int, int>(col + dc, row + dr));
-						}
-					}
-				}
-				return ret;
-			} else {
-				throw new Exception("King-Piece of color " + (White ? "white" : "black") + " expected.");
+				throw new Exception((White ? "White" : "Black") + " King-Piece expected!");
 			}
 		}
 	}

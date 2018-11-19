@@ -24,17 +24,11 @@ namespace Engine.Model.Pieces {
 			Value = 500;
 		}
 		public Rook(Rook other) : base(other) {}
-		public override List<Tuple<int, int>> ValidMoves(Board board, in int col, in int row) {
-			return ValidMoves<Rook>(board, col, row);
-		}
 		public override Tuple<int, int>[] getDirections() {
 			return directions;
 		}
-		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
-			return ProtectedTeammates<Rook>(board, col, row);
-		}
-		public override List<PinData> CurrentPins(Board board, in int col, in int row) {
-			return CurrentPins<Rook>(board, col, row);
+		public override PieceStatus CurrentStatus(Board board, in int col, in int row) {
+			return CurrentStatus<Rook>(board, col, row);
 		}
 	}
 }

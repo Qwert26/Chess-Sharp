@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Engine.Model.Pieces {
 	public class Knight : Piece {
-		public static readonly Tuple<int, int>[] condensedTargets = { new Tuple<int, int>(2, 1), new Tuple<int, int>(1, 2) };
+		public static readonly Tuple<int, int>[] condensedDirections = { new Tuple<int, int>(2, 1), new Tuple<int, int>(1, 2) };
 		public static Knight CreateKnight(string abb) {
 			Knight ret = new Knight();
 			if (abb.Equals("N")) {
@@ -21,44 +21,36 @@ namespace Engine.Model.Pieces {
 			Value = 300;
 		}
 		public Knight(Knight other) : base(other) {}
-		public override List<Tuple<int, int>> ValidMoves(Board board, in int col, in int row) {
+		public override PieceStatus CurrentStatus(Board board, in int col, in int row) {
 			if (board[col, row] is Knight && board[col, row].White == White) {
-				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
+				PieceStatus ret = new PieceStatus {
+					attackedEnemyPieces = new List<Tuple<int, int>>(),
+					freeMoveSpaces = new List<Tuple<int, int>>(),
+					protectedTeammates = new List<Tuple<int, int>>()
+				};
 				int targetCol, targetRow;
-				foreach (Tuple<int, int> ct in condensedTargets) {
-					for (int multCol = -1; multCol <= 1; multCol += 2) {
-						for (int multRow = -1; multRow <= 1; multRow += 2) {
-							targetCol = col + ct.Item1 * multCol;
-							targetRow = row + ct.Item2 * multRow;
-							if (board.IsAccessible(targetCol, targetRow) && (board.IsFree(targetCol, targetRow) || board[targetCol, targetRow].White != White)) {
-								ret.Add(new Tuple<int, int>(targetCol, targetRow));
+				foreach (Tuple<int, int> dir in condensedDirections) {
+					for (sbyte colMult = -1; colMult <= 1; colMult += 2) {
+						for (sbyte rowMult = -1; rowMult <= 1; rowMult += 2) {
+							targetCol = col + colMult * dir.Item1;
+							targetRow = row + rowMult * dir.Item2;
+							if (board.IsAccessible(targetCol, targetRow)) {
+								if (board.IsFree(targetCol, targetRow)) {
+									ret.freeMoveSpaces.Add(new Tuple<int, int>(targetCol, targetRow));
+								} else {
+									if (board[targetCol, targetRow].White == White) {
+										ret.protectedTeammates.Add(new Tuple<int, int>(targetCol, targetRow));
+									} else {
+										ret.attackedEnemyPieces.Add(new Tuple<int, int>(targetCol, targetRow));
+									}
+								}
 							}
 						}
 					}
 				}
 				return ret;
 			} else {
-				throw new Exception("Knight-Piece of color " + (White ? "white" : "black") + " expected.");
-			}
-		}
-		public override List<Tuple<int, int>> ProtectedTeammates(Board board, in int col, in int row) {
-			if (board[col, row] is Knight && board[col, row].White == White) {
-				List<Tuple<int, int>> ret = new List<Tuple<int, int>>();
-				int targetCol, targetRow;
-				foreach (Tuple<int, int> ct in condensedTargets) {
-					for (int multCol = -1; multCol <= 1; multCol += 2) {
-						for (int multRow = -1; multRow <= 1; multRow += 2) {
-							targetCol = col + ct.Item1 * multCol;
-							targetRow = row + ct.Item2 * multRow;
-							if (board.IsAccessible(targetCol, targetRow) && !board.IsFree(targetCol, targetRow) && board[targetCol, targetRow].White == White) {
-								ret.Add(new Tuple<int, int>(targetCol, targetRow));
-							}
-						}
-					}
-				}
-				return ret;
-			} else {
-				throw new Exception("Knight-Piece of color " + (White ? "white" : "black") + " expected.");
+				throw new Exception((White ? "White" : "Black") + " Knight-Piece expected!");
 			}
 		}
 	}
