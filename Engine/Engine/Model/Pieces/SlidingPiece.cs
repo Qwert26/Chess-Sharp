@@ -11,7 +11,8 @@ namespace Engine.Model.Pieces {
 					attackedEnemyPieces = new List<Tuple<int, int>>(),
 					freeMoveSpaces = new List<Tuple<int, int>>(),
 					protectedTeammates = new List<Tuple<int, int>>(),
-					currentPins = new List<PinData>()
+					currentPins = new List<PinData>(),
+					promotable = false
 				};
 				int targetCol, targetRow, targetColProjection, targetRowProjection;
 				foreach (Tuple<int, int> direction in getDirections()) {
@@ -36,8 +37,8 @@ namespace Engine.Model.Pieces {
 											} else {
 												if (board[targetColProjection, targetRowProjection].White != White) {
 													ret.currentPins.Add(new PinData(board, new Tuple<int, int>(col, row), new Tuple<int, int>(targetCol, targetRow), new Tuple<int, int>(targetColProjection, targetRowProjection)));
-													goto nextDirection;
 												}
+												goto nextDirection;
 											}
 										} else {
 											goto nextDirection;

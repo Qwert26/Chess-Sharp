@@ -32,7 +32,8 @@ namespace Engine.Model.Pieces {
 				PieceStatus ret = new PieceStatus {
 					attackedEnemyPieces = new List<Tuple<int, int>>(),
 					freeMoveSpaces = new List<Tuple<int, int>>(),
-					protectedTeammates = new List<Tuple<int, int>>()
+					protectedTeammates = new List<Tuple<int, int>>(),
+					promotable = false
 				};
 				int startRank = board.PawnStartRank(White);
 				if (White) {
@@ -40,6 +41,9 @@ namespace Engine.Model.Pieces {
 						ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row + 1));
 						if (row == startRank && board.IsFree(col, row + 2)) {
 							ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row + 2));
+						}
+						if (row + 1 == board.Rows) {
+							ret.promotable = true;
 						}
 					}
 					if(board.IsAccessible(col+1,row+1)&& !board.IsFree(col+1,row+1)) {
@@ -61,6 +65,9 @@ namespace Engine.Model.Pieces {
 						ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row - 1));
 						if (row == startRank && board.IsFree(col, row - 2)) {
 							ret.freeMoveSpaces.Add(new Tuple<int, int>(col, row - 2));
+						}
+						if (row - 1 == 0) {
+							ret.promotable = true;
 						}
 					}
 					if (board.IsAccessible(col + 1, row - 1) && !board.IsFree(col + 1, row - 1)) {

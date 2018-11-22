@@ -8,6 +8,7 @@ namespace Engine.Model {
 		/// Q: white queen-side
 		/// k: black king-side
 		/// q: black queen-side
+		/// Andere Buchstaben stehen für Position der Türme
 		/// </summary>
 		private string castleRights;
 		public Board(int cols, int rows) {
@@ -20,6 +21,12 @@ namespace Engine.Model {
 			get {
 				return Math.Max(pieces.GetLength(0), pieces.GetLength(1))-1;
 			}
+		}
+		public int Columns {
+			get => pieces.GetLength(0);
+		}
+		public int Rows {
+			get => pieces.GetLength(1);
 		}
 		public Piece this[int col, int row] {
 			get {
@@ -50,9 +57,19 @@ namespace Engine.Model {
 			}
 		}
 		public void SetDefaultCastleRights() {
-			castleRights = "KQkq";
+			castleRights = "KkQq";
 		}
-		public void SetRookbasedCastleRights() { }
+		public void SetRookbasedCastleRights() {
+			castleRights = "";
+			for (int col = 0; col < pieces.GetLength(0); col++) {
+				if (pieces[col, 0] is Pieces.Rook) {
+					castleRights += ('A' + col);
+				}
+				if (pieces[col, pieces.GetLength(1) - 1] is Pieces.Rook) {
+					castleRights += ('a' + col);
+				}
+			}
+		}
 		public int PawnStartRank(bool white) {
 			if (white) {
 				return 1;
@@ -100,6 +117,11 @@ namespace Engine.Model {
 				}
 			}
 		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="white">Soll das weiße Team betrachtet werden?</param>
+		/// <returns></returns>
 		public Dictionary<Tuple<int, int>, PieceStatus> CollectPieceStatus(bool white) {
 			Dictionary<Tuple<int, int>, PieceStatus> ret = new Dictionary<Tuple<int, int>, PieceStatus>();
 			for (int col = 0; col < pieces.GetLength(0); col++) {
@@ -111,6 +133,10 @@ namespace Engine.Model {
 			}
 			return ret;
 		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public Dictionary<Tuple<int, int>, PieceStatus> CollectPieceStatus() {
 			Dictionary<Tuple<int, int>, PieceStatus> ret = new Dictionary<Tuple<int, int>, PieceStatus>();
 			for (int col = 0; col < pieces.GetLength(0); col++) {
