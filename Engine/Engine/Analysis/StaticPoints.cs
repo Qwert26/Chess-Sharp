@@ -137,20 +137,81 @@ namespace Engine.Analysis {
 					} else if (col == 1 || col == columns - 2) {
 						fields = 4; //Ist diagonal von einer Ecke
 					} else {
-						fields = 6;
+						fields = 6; //Zwei Felder vom Rand und mindestens 3 Felder von einer Ecke
 					}
 				} else {
 					//linker oder rechter Rand?
 					if (col == 0 || col == columns - 1) {
 						fields = 4; //Zwei Felder von einer Ecke entfernt
 					} else if (col == 1 || col == columns - 2) {
-						fields = 6;
+						fields = 6; //Zwei Felder vom Rand und mindestens 3 Felder von einer Ecke
 					} else {
-						fields = 8; //Ist im Zentrum
+						fields = 8; //Ist im "Zentrum"
 					}
 				}
 			}
-			return StaticMath.Recode(2, 8, 0.7, 1, fields,out double t);
+			return StaticMath.Recode(2, 8, 0.7, 1, fields);
+		}
+		/// <summary>
+		/// Berechnet einen Punktemultiplikator für den Springer abhängig davon, wie geschlossen ein Spielbrett ist.
+		/// </summary>
+		/// <param name="board">Aktuelles Brett</param>
+		/// <param name="white">Nullbarer Wahrheitswert, der angibt ob weiß(true), schwarz(false) oder beide(null) Teams betrachtet werden sollen.</param>
+		/// <returns></returns>
+		public static double PointMultiplierKnightCloseness(Board board, bool? white = null) {
+			bool[,] closeness = AssessCloseness(board);
+			int closeCount = 0;
+			if (white.HasValue) {
+				for (int col = 0; col < board.Columns; col++) {
+					closeCount += closeness[col, white.Value ? 1 : 0] ? 1 : 0;
+				}
+				return StaticMath.Recode(0, board.Columns, 1, 1.5, closeCount);
+			} else {
+				for (int col = 0; col < board.Columns; col++) {
+					closeCount += closeness[col, 0] ? 1 : 0;
+					closeCount += closeness[col, 1] ? 1 : 0;
+				}
+				return StaticMath.Recode(0, board.Columns * 2, 1, 1.5, closeCount);
+			}
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="board">Das Brett, dessen Geschlossenheit beurteilt werden soll.</param>
+		/// <returns>Eine Wahrheitsmatrix, die für jede Spalte angibt, ob diese für eine Farbe geschlossen oder offen ist.</returns>
+		public static bool[,] AssessCloseness(Board board) {
+			bool[,] ret = new bool[board.Columns, 2];
+			for (int col = 0; col < board.Columns; col++) {
+				ret[col, 0] = ret[col, 1] = false;
+				for (int row = 0; row < board.Rows; row++) {
+					if (!board.IsFree(col, row) && board[col, row] is Pawn) {
+						ret[col, board[col, row].White ? 1 : 0] = true;
+					}
+				}
+			}
+			return ret;
+		}
+		/// <summary>
+		/// Berechnet einen Punktemultiplikator für Läufer, Türme und Königinnen abhängig davon, wie geschlossen ein Spielbrett ist.
+		/// </summary>
+		/// <param name="board">Aktuelles Brett</param>
+		/// <param name="white">Nullbarer Wahrheitswert, der angibt ob weiß(true), schwarz(false) oder beide(null) Teams betrachtet werden sollen.</param>
+		/// <returns></returns>
+		public static double PointMultiplierSlidersCloseness(Board board, bool? white = null) {
+			bool[,] closeness = AssessCloseness(board);
+			int closeCount = 0;
+			if (white.HasValue) {
+				for (int col = 0; col < board.Columns; col++) {
+					closeCount += closeness[col, white.Value ? 1 : 0] ? 1 : 0;
+				}
+				return StaticMath.Recode(0, board.Columns, 1.1, 1, closeCount);
+			} else {
+				for (int col = 0; col < board.Columns; col++) {
+					closeCount += closeness[col, 0] ? 1 : 0;
+					closeCount += closeness[col, 1] ? 1 : 0;
+				}
+				return StaticMath.Recode(0, board.Columns * 2, 1.1, 1, closeCount);
+			}
 		}
 	}
 }

@@ -32,5 +32,10 @@ namespace Engine.Model {
 				return Pinned.Royal;
 			}
 		}
+		public int GetPinValue {
+			get {
+				return Hidden.Value - Pinned.Value;
+			}
+		}
 	}
 }

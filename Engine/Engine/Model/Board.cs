@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 namespace Engine.Model {
 	public class Board {
 		private Piece[,] pieces;
@@ -69,6 +70,33 @@ namespace Engine.Model {
 					castleRights += ('a' + col);
 				}
 			}
+		}
+		public string GetCastleRightsFEN() {
+			char[] prep=castleRights.ToCharArray();
+			Array.Sort(prep);
+			return new string(prep);
+		}
+		public string GetBoardFEN() {
+			StringBuilder builder = new StringBuilder();
+			for (int row = Rows - 1; row >= 0; row--) {
+				int empty = 0;
+				for (int col = 0; col < Columns; col++) {
+					if (IsFree(col, row)) {
+						empty++;
+					} else {
+						if (empty != 0) {
+							builder.Append(empty);
+							empty = 0;
+						}
+						builder.Append(this[col, row].Abbreviation);
+					}
+				}
+				if (empty != 0) {
+					builder.Append(empty);
+				}
+				builder.Append('/');
+			}
+			return builder.Remove(builder.Length - 1, 1).ToString();
 		}
 		public int PawnStartRank(bool white) {
 			if (white) {
