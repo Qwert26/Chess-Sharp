@@ -99,7 +99,7 @@ namespace Engine.Analysis {
 			}
 		}
 		/// <summary>
-		/// 
+		/// Berechnet einen Punktemultiplikator für den Springer abhängig davon, wo er sich auf dem Brett befindet.
 		/// </summary>
 		/// <param name="board"></param>
 		/// <param name="col"></param>
