@@ -22,7 +22,7 @@ namespace Engine.Model {
 		/// </summary>
 		public List<PinData> currentPins;
 		/// <summary>
-		/// 
+		/// Die Figur kann zu einer anderen, stärkeren Figur befördert werden.
 		/// </summary>
 		public bool promotable;
 	}

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-namespace Engine.Model {
-	public abstract class Piece {
+﻿namespace Engine.Model
+{
+    public abstract class Piece {
 		public string name;
 		private string abbreviation;
 		public Piece(Piece other) {
