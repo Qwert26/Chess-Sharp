@@ -104,8 +104,9 @@ namespace Engine.Analysis {
 		/// <param name="board"></param>
 		/// <param name="col"></param>
 		/// <param name="row"></param>
+        /// <param name="linear"></param>
 		/// <returns></returns>
-		public static double PointMultiplierKnightPositional(Board board, in int col, in int row) {
+		public static double PointMultiplierKnightPositional(Board board, in int col, in int row, bool linear=true) {
 			int rows = board.Rows;
 			int fields;
 			//Ist das Brett ein Zylinder?
@@ -150,7 +151,7 @@ namespace Engine.Analysis {
 					}
 				}
 			}
-			return StaticMath.Recode(2, 8, 0.7, 1, fields);
+            return linear ? StaticMath.Recode(2, 8, 0.7, 1, fields) : Math.Pow(10.0 / 7.0, StaticMath.Recode(2, 8, 0, 1, fields));
 		}
 		/// <summary>
 		/// Berechnet einen Punktemultiplikator für den Springer abhängig davon, wie geschlossen ein Spielbrett ist.

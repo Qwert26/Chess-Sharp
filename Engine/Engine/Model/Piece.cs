@@ -1,6 +1,10 @@
-﻿namespace Engine.Model
+﻿using System;
+using System.Collections.Generic;
+
+namespace Engine.Model
 {
-    public abstract class Piece {
+    public abstract class Piece : IEquatable<Piece>
+    {
 		public string name;
 		private string abbreviation;
 		public Piece(Piece other) {
@@ -36,5 +40,34 @@
 			}
 		}
 		public abstract PieceStatus CurrentStatus(Board board, in int col, in int row);
-	}
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Piece);
+        }
+
+        public bool Equals(Piece other)
+        {
+            return other != null &&
+                   White == other.White &&
+                   Royal == other.Royal &&
+                   Value == other.Value &&
+                   Abbreviation == other.Abbreviation;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(White, Royal, Value, Abbreviation);
+        }
+
+        public static bool operator ==(Piece piece1, Piece piece2)
+        {
+            return EqualityComparer<Piece>.Default.Equals(piece1, piece2);
+        }
+
+        public static bool operator !=(Piece piece1, Piece piece2)
+        {
+            return !(piece1 == piece2);
+        }
+    }
 }

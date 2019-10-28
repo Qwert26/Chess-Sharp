@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 namespace Engine.Model {
-	public class Board {
+	public class Board : IEquatable<Board>
+    {
 		private Piece[,] pieces;
 		/// <summary>
 		/// K: white king-side
@@ -176,5 +177,33 @@ namespace Engine.Model {
 			}
 			return ret;
 		}
-	}
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Board);
+        }
+
+        public bool Equals(Board other)
+        {
+            return other != null &&
+                   EqualityComparer<Piece[,]>.Default.Equals(pieces, other.pieces) &&
+                   castleRights == other.castleRights &&
+                   Zylindrical == other.Zylindrical;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(pieces, castleRights, Zylindrical);
+        }
+
+        public static bool operator ==(Board board1, Board board2)
+        {
+            return EqualityComparer<Board>.Default.Equals(board1, board2);
+        }
+
+        public static bool operator !=(Board board1, Board board2)
+        {
+            return !(board1 == board2);
+        }
+    }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 namespace Engine.IO
 {
-    public class UCIProtocol
+    public class UCIProtocol : IProtocol
     {
-
+        public Action ParseCommand(string input)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
